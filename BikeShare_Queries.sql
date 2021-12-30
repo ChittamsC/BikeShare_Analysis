@@ -1,5 +1,6 @@
-Cyclistic Queries(Big_Query)
-###Union of Separate csv files to create Big table
+###Enviornment used was Big Query
+
+### Following is a Union of Separate csv files to create Big table
 
 CREATE TABLE civic-vigil-319501.Cyclistic.CyclisticUnion AS
 SELECT *
@@ -39,10 +40,9 @@ SELECT *
 FROM `civic-vigil-319501.Cyclistic.202106`
 
 
-###Cleaning of Unioned Tables and Creation of new table
-##Removes rows with NULL values as well as documented rides that were tests done by the company and extracts the dayofweek, month, and hourofday from started_at column.
-###Querying the difference in both started_at and ended_at timestamps and saving results in new table to gain a ride_length_secs(ride length in seconds) column. 
-
+###Following query cleans the newly created table and creates a final table to be used for analysis
+###Removes rows with NULL values as well as documented rides that were tests done by the company and extracts the dayofweek, month, and hourofday from started_at column.
+###Also gives the difference in both started_at and ended_at timestamps and saves results to gain a ride_length_secs(ride length in seconds) column.
 
 CREATE TABLE civic-vigil-319501.Cyclistic.CleanCyclisticUnion_1 AS
 
@@ -70,14 +70,14 @@ AND (start_station_name) NOT LIKE '%TEST%'
 AND (end_station_name) NOT LIKE '%TEST%'
 
 
-####Following queries were all executed, and results saved as additional tables to later be used in the visualization
-###Querying all results with a ride length between 1 minute and 1 day since rides under a minute can be considered false starts and any rides over a day the bikes can be considered either lost or stolen. (Saving results as new table)
+###Querying all results with a ride length between 1 minute and 1 day since rides under a minute considered either lost or stolen.
 
 SELECT *,
 FROM `civic-vigil-319501.Cyclistic.CleanCyclisticUnion_1`
 WHERE ride_length_secs between 60 AND 86400
 
-###Query lets us know how many Cyclistic users are either a member or casual user
+
+###Query lets us know how many Cyclistic users are either a member or a casual user
 
 SELECT 
 member_casual, 
@@ -97,7 +97,7 @@ group by rideable_type, member_casual
 
 
 
-###Query lets us know number of rides per member and casual user per month allowing us to conclude the more popular months of usage
+###Query lets us know number of rides per member and casual user per month allowing us to know the more popular months of usage
 
 SELECT 
 month, member_casual,
@@ -108,7 +108,7 @@ order by Month
 
 
 
-###Query the station name and the amount of rides per member and casual to figure out the most popular stations
+###Query the station name and the amount of rides per members and casual users to figure out the most popular stations
 
 SELECT 
 start_station_name, member_casual,
@@ -119,11 +119,8 @@ order by member_casual, rides desc
 
 
 
-
-
-
-
 ###Query lets us know how many rides per member and casual user are initiated every hour of the day. This allows us to determine the most popular usage hours for both members and casual users.
+
 SELECT 
 HourofDay, member_casual,
 count(1) as rides
