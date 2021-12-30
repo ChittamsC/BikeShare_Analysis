@@ -143,12 +143,10 @@ order by Dayofweek
 
 SELECT
 AVG(ride_length_secs)/60 as Avg_ride_length_Min, member_casual,
-FROM 
-`civic-vigil-319501.Cyclistic.CleanCyclisticUnion_4`
+FROM `civic-vigil-319501.Cyclistic.CleanCyclisticUnion_4`
 group by member_casual
 
 
 SELECT
 AVG(ride_length_secs)/60 as All_avg_ride_length_Min
-FROM 
-`civic-vigil-319501.Cyclistic.CleanCyclisticUnion_4`
+FROM `civic-vigil-319501.Cyclistic.CleanCyclisticUnion_4`
