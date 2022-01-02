@@ -1,3 +1,4 @@
+--Enviornment used was SSMS(Sql Server Management Studio)
 
 SELECT *
 FROM Covid_Proj_Files..CovidDeaths
@@ -57,7 +58,7 @@ order by 1,2
 
 --Global number of cases and deaths and calculating the % of infected that died
 
-SELECT SUM(new_cases) as total_cases, Sum(cast(new_Deaths as int)) as total_deaths, Sum(cast(new_deaths as int))/Sum(New_Cases)*100 as DeathPercentage
+SELECT SUM(new_cases) as total_cases, SUM(cast(new_Deaths as int)) as total_deaths, Sum(cast(new_deaths as int))/Sum(New_Cases)*100 as DeathPercentage
 FROM Covid_Proj_Files..CovidDeaths
 WHERE continent is not null
 --GROUP BY date
@@ -128,7 +129,7 @@ Join Covid_Proj_Files.. CovidVaccinations vac
 where dea.continent is not null 
 --order by 2,3
 
-Select *, (RollingPeopleVaccinated/Population)*100
+Select *, (RollingPeopleVaccinated/Population)*100 as Percent_of_Pop_Vaxxed
 From #PercentPopulationVaccinated
 
 
