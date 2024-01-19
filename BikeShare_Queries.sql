@@ -110,8 +110,6 @@ UNION ALL
 SELECT *
 FROM [Divvy].[dbo].['202211-divvy-tripdata$']
 
-###Getting rid of duplicate rides and extracting date names, parts, and length of ride from started_at column
-
 SELECT DISTINCT [ride_id]
 	,[rideable_type]
 	,[started_at]
@@ -135,15 +133,10 @@ SELECT DISTINCT [ride_id]
 INTO Divvy.dbo.UnionDivvy2
 FROM Divvy.dbo.UnionDivvy
 
-###Selecting all data where ride length is longer than one minute and less than 24 hours.
-###Any ride longer than 24 hours the bike is to be considered stolen, and any ride less than one minute is considered a false start.
-
 SELECT *
 INTO Divvy.dbo.CleanDivvy
 FROM Divvy.dbo.UnionDivvy2
 WHERE ride_length_min between 1 AND 1440
-
-###Cleaning Station Names
 
 UPDATE Divvy.[dbo].[CleanDivvy]
 SET start_station_name = LEFT(start_station_name, Len(start_station_name) - 1)
@@ -207,8 +200,6 @@ SET end_station_name = 'E-Bike Lock'
 WHERE end_station_name IS NULL
 	AND rideable_type = 'electric_bike'
 
-###Creating a table with total number of member and causal rides
-
 SELECT member_casual
 	,year
 	,count(*) AS rides
@@ -216,8 +207,6 @@ FROM Divvy.dbo.CleanDivvy
 GROUP BY member_casual
 	,year
 ORDER BY year
-
-###Creating a table with total number of member and casual rides per bike type 
 
 SELECT rideable_type
 	,member_casual
@@ -227,8 +216,6 @@ FROM Divvy.dbo.CleanDivvy
 GROUP BY rideable_type
 	,member_casual
 	,year
-
-###Creating a table with total number of member and casual rides per month
 
 SELECT month
 	,member_casual
@@ -243,8 +230,6 @@ GROUP BY month
 ORDER BY year
 	,month
 
-###Creating a table with the member and casual rides per day of week
-
 SELECT member_casual
 	,Dayofweek
 	,year
@@ -253,8 +238,6 @@ FROM [Divvy].[dbo].[CleanDivvy]
 GROUP BY member_casual
 	,Dayofweek
 	,year
-
-#Creating a table with # of rides by start station 
 
 SELECT DISTINCT start_station_name
 	,member_casual
@@ -265,8 +248,6 @@ GROUP BY start_station_name
 	,member_casual
 ORDER BY Rides DESC
 
-### # of rides by end station
-
 SELECT DISTINCT end_station_name
 	,member_casual
 	,count(*) AS Rides
@@ -276,7 +257,6 @@ GROUP BY end_station_name
 	,member_casual
 ORDER BY Rides DESC
 
-###Member Top 5 Start Stations
 SELECT start_station_name
 	,member_casual
 	,Count(ride_id) AS Rides
@@ -318,7 +298,6 @@ WHERE start_station_name = 'Kingsbury St & Kinzie St'
 GROUP BY start_station_name
 	,member_casual
 
-###Member Top 5 End Stations
 Select start_station_name,member_casual, Count(ride_id) as Rides,
 Case 
 When start_station_name = 'Kingsbury St & Kinzie St' then 41.88924
@@ -346,7 +325,6 @@ OR start_station_name = 'Wells St & Elm St'
 OR start_station_name = 'Clinton St & Madison St'
 GROUP BY start_station_name, member_casual
 
-###Casual Top 5 Start Stations
 Select start_station_name,member_casual, Count(ride_id) as Rides,
 Case 
 When start_station_name = 'Streeter Dr & Grand Ave' then 41.89230
@@ -374,7 +352,6 @@ OR start_station_name = 'DuSable Lake Shore Dr & Monroe St'
 OR start_station_name = 'Shedd Aquarium'
 GROUP BY start_station_name, member_casual
 
-###Top 5 Casual End Stations
 Select start_station_name,member_casual, Count(ride_id) as Rides,
 Case 
 When start_station_name = 'Streeter Dr & Grand Ave' then 41.89230
@@ -401,11 +378,6 @@ OR start_station_name = 'Michigan Ave & Oak St'
 OR start_station_name = 'DuSable Lake Shore Dr & Monroe St'
 OR start_station_name = 'DuSable Lake Shore Dr & North Blvd'
 GROUP BY start_station_name, member_casual
-
-
-
-
-###Creating a table with the most popular routes of casual riders from the most popular departing stations
 
 SELECT start_station_name
 	,end_station_name
@@ -439,9 +411,6 @@ SELECT rideable_type
   GROUP BY rideable_type
       ,member_casual
       ,Year
-
-
-###Selecting all data where ride length is 24 hours or greater—Ride is considered a stolen bike
 
 SELECT *
 INTO Divvy2.dbo.Rides_Over_24hrs
@@ -487,11 +456,6 @@ GROUP BY Month
 	,Year
 ORDER BY Month_Num ASC
 
-
-
-
-###Alter columns to enable a union of all datasets
-
 ALTER TABLE [QDivvy].[dbo].[Divvy_Trips_2018_Q1$]
 ALTER COLUMN trip_id VARCHAR(50)
 
@@ -539,10 +503,7 @@ ALTER COLUMN to_station_id VARCHAR(50)
 
 ALTER TABLE [QDivvy].[dbo].[Divvy_Trips_2019_Q2]
 ALTER COLUMN birthyear VARCHAR(50)
-
-
-###Union Quarterly data sets
-
+	
 SELECT *
 INTO QDivvy.dbo.Q_Union
 FROM [QDivvy].[dbo].[Divvy_Trips_2018_Q1$]
@@ -567,15 +528,12 @@ FROM [QDivvy].[dbo].[Divvy_Trips_2019_Q3]
 UNION ALL
 SELECT *
 FROM [QDivvy].[dbo].[Divvy_Trips_2019_Q4]
-
-###Changing data type of two columns to prepare for dat
+	
 ALTER TABLE Qdivvy.dbo.Q_Union
 ALTER COLUMN start_time DATETIME
 
 ALTER TABLE QDivvy.dbo.Q_Union
 ALTER COLUMN end_time DATETIME
-
-###Cleaning data to extract date parts, ride length in minutes, and to salvage the gender , birth year, and user type information in the dataset.
 
 SELECT *
 	,Datename(weekday FROM start_time) AS Dayofweek
@@ -644,8 +602,6 @@ SELECT *
 INTO QDivvy.dbo.Q2
 FROM QDivvy.dbo.Q_Union
 
-
-
 DELETE
 FROM [QDivvy].[dbo].[Q2]
 WHERE Sex IS NULL
@@ -701,8 +657,6 @@ GROUP BY age
 ORDER BY count(*) DESC
 	,Sex
 
-###Creating a table that counts the number of rides per age and deleting any rides where the rider is over 100 years old
-
 SELECT Age
 	,Count(1) AS Rides
 INTO Divvy.dbo.Age_Rides
@@ -713,8 +667,6 @@ SELECT *
 INTO Divvy.dbo.AgeRides
 FROM [Divvy].[dbo].[Age_Rides]
 WHERE Age < 101
-
-###Creating a table that counts the number of rides per rider gender
 
 SELECT Sex
 	,Count(1) AS Rides
