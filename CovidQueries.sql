@@ -32,8 +32,8 @@ FROM Covid_Proj_Files..CovidDeaths
 Group by Location, population
 Order by PopulationInfectionPercentage DESC
 
---Looking at Death Count and calculating % of dead population by Country
-
+--Looking at Death Count and calculating % of dead population by Country 
+	
 Select Location, MAX(cast(total_deaths as int)) as DeathCount, Max((total_deaths/population)) * 100 as PopulationDeathCountPercentage
 FROM Covid_Proj_Files..CovidDeaths
 Where continent is not null
